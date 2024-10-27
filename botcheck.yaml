@@ -1,0 +1,66 @@
+port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+unified-delay: true
+global-client-fingerprint: chrome
+
+dns:
+  enable: true
+  listen: :53
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  default-nameserver: 
+    - 223.5.5.5
+    - 8.8.8.8
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  fallback:
+    - https://1.0.0.1/dns-query
+    - tls://dns.google
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+
+proxies:
+- name: 请选择DIRECT                       
+  type: ss
+  server: 1.1.1.1                   
+  port: 1111                                    
+  password: 1111111111111111111111111111111111111111111=
+  cipher: aes-256-gcm
+  udp: true  
+
+- name: 必须规则模式                       
+  type: ss
+  server: 1.1.1.1                   
+  port: 1111                                    
+  password: 1111111111111111111111111111111111111111111=
+  cipher: aes-256-gcm
+  udp: true
+
+proxy-groups:
+- name: 选择节点
+  type: select
+  url: https://www.apple.com/library/test/success.html
+  interval: 300
+  tolerance: 50
+  proxies:
+    - REJECT
+    - DIRECT
+    - 请选择DIRECT
+    - 必须规则模式
+    
+rules:
+  - DOMAIN-SUFFIX,sgameicon.ecology.smoba.qq.com,REJECT
+  - DOMAIN-SUFFIX,360.com,REJECT
+  - DOMAIN-SUFFIX,360.cn,REJECT
+  - DOMAIN-SUFFIX,so.com,REJECT
+  - DOMAIN-SUFFIX,qihu.com,REJECT
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,选择节点
